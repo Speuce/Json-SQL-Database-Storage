@@ -1,6 +1,4 @@
 import com.google.gson.*;
-import orion.server.AsynchronousTaskService;
-
 
 import java.io.File;
 import java.sql.*;
@@ -52,25 +50,6 @@ public class DatabaseManager {
      */
     private static Connection currentConnection = null;
 
-    /**
-     * The Included Table Manager with this Database Manager
-     */
-    private TableManager tableManager;
-
-    /**
-     * The included database-order manager with this database manager
-     */
-    private DatabaseOrderManager databaseOrderManager;
-
-    /**
-     * The included database-employee manager with this database manager
-     */
-    private DatabaseEmployeeManager databaseEmployeeManager;
-
-    /**
-     * The incuded database-customer with this database manager
-     */
-    private DatabaseCustomerManager databaseCustomerManager;
 
     /**
      * Private because this should be access as a singleton instance. Never directly instantiated
@@ -80,11 +59,6 @@ public class DatabaseManager {
         File f = new File("data/santalucia.db");
         checkedTypes = new HashSet<>();
         jdbcString = "jdbc:sqlite:" + f.getAbsolutePath();
-        tableManager = new TableManager(this);
-        tableManager.retrieveCurrentTables();
-        databaseOrderManager = new DatabaseOrderManager(this);
-        databaseEmployeeManager = new DatabaseEmployeeManager(this);
-        databaseCustomerManager = new DatabaseCustomerManager(this);
     }
 
     /**
@@ -534,18 +508,7 @@ public class DatabaseManager {
     private void saveAndCheck(Map<String, Data> saveMap, String put, String table, String column, Connection conn, boolean ascertain){
         /* Its a regular datatype*/
         /* Assert the columns exsist*/
-        if(ascertain){
-            tableManager.assertColumn(table, column, DataType.TEXT, conn);
-        }
         saveMap.put(column, new Data(put, DataType.TEXT));
-    }
-
-    public TableManager getTableManager() {
-        return tableManager;
-    }
-
-    public DatabaseOrderManager getDatabaseOrderManager() {
-        return databaseOrderManager;
     }
 
     public DataType getType(String datatype, JsonElement e){
@@ -569,13 +532,4 @@ public class DatabaseManager {
         }
         return DataType.TEXT;
     }
-
-    public DatabaseEmployeeManager getDatabaseEmployeeManager() {
-        return this.databaseEmployeeManager;
-    }
-
-    public DatabaseCustomerManager getDatabaseCustomerManager(){
-        return this.databaseCustomerManager;
-    }
-
 }
